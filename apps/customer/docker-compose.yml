@@ -26,6 +26,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  vault:
+    image: hashicorp/vault
+    restart: on-failure:10
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - ${VAULT_PORT}:8200
+    command: server
+    volumes:
+      - vault-data:/vault/file
+      - $PWD/config.hcl:/vault/config/config.hcl
   keycloak:
     image: quay.io/keycloak/keycloak
     command: -v start-dev --import-realm
@@ -58,4 +69,5 @@ services:
       interval: 10s
       retries: 10
 volumes:
+  vault-data: ~
   postgres: ~
