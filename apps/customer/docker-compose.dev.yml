@@ -1,5 +1,16 @@
 version: "3"
 services:
+  vault:
+    image: hashicorp/vault
+    restart: on-failure:10
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - ${VAULT_PORT}:8200
+    command: server
+    volumes:
+      - vault-data:/vault/file
+      - $PWD/config.dev.hcl:/vault/config/config.hcl
   keycloak:
     image: quay.io/keycloak/keycloak
     command: -v start-dev --import-realm
@@ -22,4 +33,5 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 volumes:
+  vault-data: ~
   postgres: ~
